@@ -1,0 +1,8 @@
+<div class="book">
+
+	<h3><a href="{% url 'book-detail' book.pk %}">{{ book.title }}</a></h3>
+	<p> by {% for author in book.authors.all %}<a href="{% url 'author-detail' author.pk %}"> {{ authorn.name }}</a>{% endfor %}</p>
+	{% if book.is_favorite %}<p class="highlight">Favorite</p>{% endif %}
+	<p>{{ book.review|linebreaks }}</p>
+
+</div>
