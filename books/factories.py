@@ -1,7 +1,7 @@
 import factory
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
-from django.utils.timezone import Now
+from django.utils.timezone import now
 from .models import Author,Book
 
 
