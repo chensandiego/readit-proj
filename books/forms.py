@@ -23,3 +23,20 @@ class BookForm(forms.ModelForm):
 	class Meta:
 		model = Book
 		fields= ['title','authors']
+
+	def clean(self):
+		#super the clean method to maintain main validation and error get_flashed_messages()
+		super(BookForm,self).clean()
+
+		try:
+			title = self.cleaned_data.get('title')
+			authors = self.cleaned_data.get('authors')
+			book = Book.objects.get(title=title,authors=authors)
+
+
+			raise forms.ValidationError(
+				'The book {} by {} already exists'.format(title,book.list_authors()),code='bookexists'
+				)
+
+		except Book.DoesNotExist:
+			return self.cleaned_data
