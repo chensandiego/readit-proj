@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404,render,redirect
 from django.views.generic import DetailView,View
 from .models import Book,Author
-from .forms import ReviewForm
+from .forms import BookForm,ReviewForm
 from django.db.models import Count
 
 # Create your views here.
@@ -43,18 +43,36 @@ class AuthorDetail(DetailView):
 	template_name = 'author.html'
 
 
-def review_books(request):
+class ReviewList(View):
 	"""
 	List all of the books that we want to review.
 	"""
-	books = Book.objects.filter(date_reviewed__isnull=True).prefetch_related('authors')
+	def get(self,request):
+
+		books = Book.objects.filter(date_reviewed__isnull=True).prefetch_related('authors')
+		
+		context = {
+			'books': books,
+			'form': BookForm,
+		}
+		
+		return render(request, "list-to-review.html", context)
 	
-	context = {
-		'books': books,
-	}
+
+	def post(self,request):
+		form = BookForm(request.POST)
+		books = Book.objects.filter(date_reviewed__isnull=True).prefetch_related('authors')
+		
+		if form.is_valid():
+			form.save()
+			return redirect('review-books')
+
+		context={
+			'form': form,
+			'books': books,
+		}
 	
-	return render(request, "list-to-review.html", context)
-	
+		return render(request, "list-to-review.html", context)
 	
 def review_book(request, pk):
 	"""
